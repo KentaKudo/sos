@@ -29,12 +29,15 @@ bootpack.nas: bootpack.gas
 bootpack.obj: bootpack.nas
 	$(NASK) $< $@ bootpack.lst
 
-bootpack.bim: bootpack.obj
+naskfunc.obj: naskfunc.nas
+	$(NASK) $< $@ naskfunc.lst
+
+bootpack.bim: bootpack.obj naskfunc.obj
 	$(OBJ2BIM) @$(RULEFILE) \
 		out:$@ \
 		stack:3136k \
 		map:bootpack.map \
-		$<
+		$^
 
 bootpack.hrb: bootpack.bim
 	$(BIM2HRB) $< $@ 0

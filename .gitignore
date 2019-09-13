@@ -51,9 +51,14 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-ipl.bin
-ipl.lst
+*.bin
+*.lst
+*.gas
+*.obj
+bootpack.nas
+bootpack.map
+bootpack.bim
+bootpack.hrb
 sos.sys
-sos.lst
 sos.img
 z_tools/qemu/fdimage0.bin

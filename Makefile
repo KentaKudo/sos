@@ -1,6 +1,12 @@
 TOOLS := z_tools
+INCPATH := $(TOOLS)/haribote/
 NASK := $(TOOLS)/nask
 EDIMG := $(TOOLS)/edimg
+CC1 := $(TOOLS)/gocc1 -I$(INCPATH) -Os -Wall -quiet
+GAS2NASK := $(TOOLS)/gas2nask -a
+OBJ2BIM := $(TOOLS)/obj2bim
+RULEFILE := $(TOOLS)/haribote/haribote.rul
+BIM2HRB := $(TOOLS)/bim2hrb
 
 ASM := ipl.bin
 OS := sos.sys
@@ -11,8 +17,30 @@ IMAGE := sos.img
 $(ASM): ipl.nas
 	$(NASK) $< $@ ipl.lst
 
-$(OS): sos.nas
-	$(NASK) $< $@ sos.lst
+asmhead.bin: asmhead.nas
+	$(NASK) $< asmhead.bin asmhead.lst
+
+bootpack.gas: bootpack.c
+	$(CC1) -o $@ $<
+
+bootpack.nas: bootpack.gas
+	$(GAS2NASK) $< $@
+
+bootpack.obj: bootpack.nas
+	$(NASK) $< $@ bootpack.lst
+
+bootpack.bim: bootpack.obj
+	$(OBJ2BIM) @$(RULEFILE) \
+		out:$@ \
+		stack:3136k \
+		map:bootpack.map \
+		$<
+
+bootpack.hrb: bootpack.bim
+	$(BIM2HRB) $< $@ 0
+
+$(OS): asmhead.bin bootpack.hrb
+	cat $^ > $@
 
 $(IMAGE): $(ASM) $(OS)
 	$(EDIMG) \
@@ -35,4 +63,6 @@ run: $(IMAGE)
 
 .PHONY: clean
 clean:
-	@rm -f $(ASM) ipl.lst $(OS) sos.lst $(IMAGE)
+	@rm -f *.bin *.lst *.gas *.obj \
+		bootpack.nas bootpack.map bootpack.bim bootpack.hrb \
+		$(IMAGE)

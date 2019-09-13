@@ -1,16 +1,25 @@
+TOOLS := z_tools
+NASK := $(TOOLS)/nask
+EDIMG := $(TOOLS)/edimg
+
 ASM := ipl.bin
+OS := sos.sys
 IMAGE := sos.img
 
 .DEFAULT_GOAL := img
 
 $(ASM): ipl.nas
-	z_tools/nask $< $@ ipl.lst
+	$(NASK) $< $@ ipl.lst
 
-$(IMAGE): $(ASM)
-	z_tools/edimg \
-		imgin:z_tools/fdimg0at.tek \
+$(OS): sos.nas
+	$(NASK) $< $@ sos.lst
+
+$(IMAGE): $(ASM) $(OS)
+	$(EDIMG) \
+		imgin:$(TOOLS)/fdimg0at.tek \
 		wbinimg \
-		src:$< len:512 from:0 to:0 \
+		src:$(ASM) len:512 from:0 to:0 \
+		copy from:$(OS) to:@: \
 		imgout:$@
 
 .PHONY: asm
@@ -21,9 +30,9 @@ img: $(IMAGE)
 
 .PHONY: run
 run: $(IMAGE)
-	cp $< z_tools/qemu/fdimage0.bin
-	make -C z_tools/qemu
+	cp $< $(TOOLS)/qemu/fdimage0.bin
+	make -C $(TOOLS)/qemu
 
 .PHONY: clean
 clean:
-	@rm -f $(ASM) ipl.lst $(IMAGE)
+	@rm -f $(ASM) ipl.lst $(OS) sos.lst $(IMAGE)

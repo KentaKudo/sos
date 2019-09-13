@@ -53,5 +53,7 @@ dkms.conf
 
 ipl.bin
 ipl.lst
+sos.sys
+sos.lst
 sos.img
 z_tools/qemu/fdimage0.bin

@@ -1,7 +1,6 @@
 /* ���̃t�@�C���ō�����֐�������܂���C�R���p�C���ɋ����� */
 
 void io_hlt(void);
-void write_mem8(int addr, int data);
 
 /* �֐��錾�Ȃ̂ɁA{}���Ȃ��Ă����Ȃ�;�������ƁA
 	���̃t�@�C���ɂ��邩���낵���ˁA�Ƃ����Ӗ��ɂȂ�̂ł��B */
@@ -9,9 +8,11 @@ void write_mem8(int addr, int data);
 void HariMain(void)
 {
 	int i;
+	char *p;
 
 	for (i = 0xa0000; i <= 0xaffff; i++) {
-		write_mem8(i, 15);
+		p = (char *) i;
+		*p = i & 0x0f;
 	}
 
 	for (;;) {

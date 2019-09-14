@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void io_hlt(void);
 void io_cli(void);
 void io_out8(int port, int data);
@@ -42,9 +44,10 @@ void HariMain(void)
 
 	init_palette();;
 	init_screen(binfo->vram, binfo->scrnx, binfo->scrny);
-	putfonts8_asc(binfo->vram, binfo->scrnx,  8,  8, COL8_FFFFFF, "ABC 123");
-	putfonts8_asc(binfo->vram, binfo->scrnx, 31, 31, COL8_000000, "SOS.");
-	putfonts8_asc(binfo->vram, binfo->scrnx, 30, 30, COL8_FFFFFF, "SOS.");
+
+	unsigned char *s;
+	sprintf(s, "scrnx = %d", binfo->scrnx);
+	putfonts8_asc(binfo->vram, binfo->scrnx, 16, 64, COL8_FFFFFF, s);
 
 	for (;;) {
 		io_hlt();

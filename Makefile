@@ -7,6 +7,8 @@ GAS2NASK := $(TOOLS)/gas2nask -a
 OBJ2BIM := $(TOOLS)/obj2bim
 RULEFILE := $(TOOLS)/haribote/haribote.rul
 BIM2HRB := $(TOOLS)/bim2hrb
+MAKEFONT := $(TOOLS)/makefont
+BIN2OBJ := $(TOOLS)/bin2obj
 
 ASM := ipl.bin
 OS := sos.sys
@@ -32,7 +34,13 @@ bootpack.obj: bootpack.nas
 naskfunc.obj: naskfunc.nas
 	$(NASK) $< $@ naskfunc.lst
 
-bootpack.bim: bootpack.obj naskfunc.obj
+hankaku.bin: hankaku.txt
+	$(MAKEFONT) $< $@
+
+hankaku.obj: hankaku.bin
+	$(BIN2OBJ) $< $@ _hankaku
+
+bootpack.bim: bootpack.obj naskfunc.obj hankaku.obj
 	$(OBJ2BIM) @$(RULEFILE) \
 		out:$@ \
 		stack:3136k \

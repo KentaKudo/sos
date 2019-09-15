@@ -1,3 +1,5 @@
+OBJS_BOOTPACK :=  bootpack.obj naskfunc.obj hankaku.obj graphic.obj dsctbl.obj
+
 TOOLS := z_tools
 INCPATH := $(TOOLS)/haribote/
 NASK := $(TOOLS)/nask
@@ -22,14 +24,14 @@ $(ASM): ipl.nas
 asmhead.bin: asmhead.nas
 	$(NASK) $< asmhead.bin asmhead.lst
 
-bootpack.gas: bootpack.c
-	$(CC1) -o $@ $<
+%.gas: %.c
+	$(CC1) -o $*.gas $*.c
 
-bootpack.nas: bootpack.gas
-	$(GAS2NASK) $< $@
+%.nas: %.gas
+	$(GAS2NASK) $*.gas $*.nas
 
-bootpack.obj: bootpack.nas
-	$(NASK) $< $@ bootpack.lst
+%.obj: %.nas
+	$(NASK) $*.nas $*.obj $*.lst
 
 naskfunc.obj: naskfunc.nas
 	$(NASK) $< $@ naskfunc.lst
@@ -40,7 +42,7 @@ hankaku.bin: hankaku.txt
 hankaku.obj: hankaku.bin
 	$(BIN2OBJ) $< $@ _hankaku
 
-bootpack.bim: bootpack.obj naskfunc.obj hankaku.obj
+bootpack.bim: $(OBJS_BOOTPACK)
 	$(OBJ2BIM) @$(RULEFILE) \
 		out:$@ \
 		stack:3136k \
